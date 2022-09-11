@@ -1,0 +1,110 @@
+<!-- This is a static file -->
+<!-- served from your routes in server.js -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Welcome to Glitch!</title>
+  <meta name="description" content="A cool thing made with Glitch" />
+  <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon" />
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <script>
+    function deleteAllCookies() {
+      var cookies = document.cookie.split(";");
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      }
+      alert("Cookies deleted!");
+    }
+    function showCookie() {
+      alert(document.cookie);
+    }
+    function login() {
+      //create the javascript object from the form
+      var user = new Object();
+      user.email = document.getElementById("email").value;
+      user.password = document.getElementById("password").value;
+
+      fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify(user),
+        credentials: "include",
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((resp) => {
+          console.log("The response token:", resp.token)
+        })
+        .catch((err) => {
+          alert("Error....", err);
+        });
+    }
+    function fetchMe(url) {
+      fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        credentials: "include",
+      })
+        .then((response) => {
+          console.log("line 71 debug")
+          return response.json();
+        })
+        .then((resp) => {
+          console.log("line 71 debug")
+          alert(resp.msg)
+        })
+        .catch((err) => {
+          alert("Error....", err);
+        });
+    }
+  </script>
+  <style>
+    a {
+      color: blue;
+      cursor: pointer
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>JWT Tinker</h1>
+  </header>
+
+  <div id="message"></div>
+
+  <form id="loginForm">
+    Email: <input type="text" id="email" value="admin@school.edu" /><span id="usernameMsg"> (use "admin@school.edu" or "teacher@school.edu")</span><br />
+    Password:&nbsp;&nbsp;
+    <input type="text" id="password" value="asdf" /><span id="passwordMsg"> (use: "asdf"</span><br />
+    <button type="button" onclick="login()">Log In</button>
+  </form>
+  <hr />
+  <ol>
+    <li><a onclick="fetchMe('api/admin')">/admin</a></li>
+    <li><a onclick="fetchMe('api/teacher')">/teacher</a></li>
+    <li><a onclick="fetchMe('api/anybody')">/anybody</a></li>
+  </ol>
+
+  <footer>
+    <a onclick="deleteAllCookies()">Delete cookies</a> |
+    <a onclick="showCookie()">Show cookies</a>
+  </footer>
+</body>
+
+</html>
