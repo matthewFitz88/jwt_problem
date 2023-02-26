@@ -48,6 +48,21 @@ function isAdmin(request, response, next) {
   }
 }
 
+function isTeacher(request, response, next) {
+  try {
+    let userDecoded = jwt.verify(request.cookies.token, SECRET_KEY)
+    if (userDecoded.role === "teacher") {
+      next()
+    } else {
+      // 403 Forbidden – client authenticated but does not have permission to access the requested resource
+      response.status(403).json({ success: false, msg: "Aautherror: client authenticated but does not have permission to access the requested resource" })
+    }
+  } catch (err) {
+    response.status(401).json({ success: false, msg: "Autherror: You are not signed in." })
+
+  }
+}
+
 
 app.get('/', function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
@@ -55,6 +70,10 @@ app.get('/', function (request, response) {
 
 app.get('/api/admin', isAdmin, function (request, response) {
   response.json({ msg: "Admin only resource returned" })
+});
+
+app.get('/api/teacher', isTeacher, function (request, response) {
+  response.json({ msg: "Teacher only resource returned" })
 });
 
 app.get('/api/anybody', function (request, response) {
